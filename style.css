@@ -1,0 +1,122 @@
+/* Reset & Base */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body, html {
+  width: 100%; height: 100%;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: radial-gradient(circle at center, #000011, #000000);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* Loader Overlay */
+#loader {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1000;
+}
+#starfield {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+#lightning-canvas {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+}
+#logo {
+  position: relative;
+  z-index: 3;
+  width: 300px;
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+/* Main Navigation */
+#main-nav {
+  position: fixed; top: 0; left: 0;
+  width: 100%; padding: 20px 40px;
+  display: flex; justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+}
+#main-nav .logo-text { font-size: 1.5rem; letter-spacing: 2px; }
+#main-nav .links a {
+  margin-left: 20px;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+#main-nav .links a:hover { color: #00ffff; }
+
+/* Hero Section */
+#hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('../assets/nebula.jpg') center center/cover no-repeat;
+  text-align: center;
+}
+#hero .hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+.btn {
+  display: inline-block;
+  padding: 12px 30px;
+  border: 2px solid #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: background 0.3s;
+}
+.btn:hover { background: rgba(255,255,255,0.1); }
+
+/* Shop Section */
+#shop {
+  padding: 60px 40px;
+  background: #000014;
+}
+#shop h2 { text-align: center; font-size: 2rem; margin-bottom: 40px; }
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 30px;
+}
+.product-card {
+  background: #111;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  transition: transform 0.3s;
+}
+.product-card:hover { transform: translateY(-10px); }
+.product-card img { width: 100%; display: block; }
+.product-info { padding: 20px; }
+.product-info h3 { font-size: 1.2rem; margin-bottom: 10px; }
+.product-info .price { font-weight: bold; margin-bottom: 15px; }
+.product-info .btn { margin-top: 10px; }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  background: #000011;
+}
+footer p { font-size: 0.9rem; margin-bottom: 10px; color: #777; }
+footer .social a {
+  margin: 0 10px;
+  font-size: 0.9rem;
+  color: #555;
+  transition: color 0.3s;
+}
+footer .social a:hover { color: #00ffff; }
