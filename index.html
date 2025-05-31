@@ -3,103 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ASTRE | Clothing Ecommerce</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>ASTRE Clothing</title>
+
+  <!-- MAIN STYLESHEET -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- GSAP FOR ANIMATIONS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"></script>
+
+  <!-- MAIN JAVASCRIPT (MODULE) -->
+  <script type="module" src="main.js" defer></script>
 </head>
 <body>
-  <!-- LOADER -->
-  <div id="loader">
-    <canvas id="starfield"></canvas>
-    <svg id="lightning-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-    <div id="flash"></div>
-    <img id="intro-logo" src="assets/logo.png" alt="ASTRE Logo" />
+  <!-- ================================
+       1) FULL-SCREEN ENTRY ANIMATION
+       ================================ -->
+  <div id="intro">
+    <!-- CANVAS FOR STARFIELD -->
+    <canvas id="introCanvas"></canvas>
+
+    <!-- WHITE FLASH OVERLAY FOR LIGHTNING STRIKE -->
+    <div id="flashOverlay"></div>
+
+    <!-- SVG “AS” LIGHTNING LOGO -->
+    <div id="introLogo">
+      <svg
+        id="introLogoSVG"
+        viewBox="0 0 600 200"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <!--
+          We draw “AS” with a jagged, lightning-bolt style stroke.
+          stroke-dasharray and stroke-dashoffset allow us to animate the “draw.”
+        -->
+        <text
+          id="logoText"
+          x="50%"
+          y="50%"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          font-family="'Helvetica Neue', Arial, sans-serif"
+          font-size="150px"
+          fill="none"
+          stroke="#0ff"
+          stroke-width="4"
+          stroke-linejoin="bevel"
+          stroke-dasharray="1200"
+          stroke-dashoffset="1200"
+        >
+          AS
+        </text>
+      </svg>
+    </div>
   </div>
 
-  <!-- NAVIGATION -->
-  <nav>
-    <button id="login-btn">Admin Login</button>
-    <img class="nav-logo" src="assets/logo.png" alt="ASTRE Logo" />
-    <div class="links">
-      <a href="#hero">Home</a>
-      <a href="#shop">Shop</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
+  <!-- ================================
+       2) MAIN CONTENT (HIDDEN AT FIRST)
+       ================================ -->
+  <div id="mainContent" class="hidden">
+    <header class="site-header">
+      <!-- This “ASTRE” will fade in with a neon glow after intro -->
+      <div class="site-logo">ASTRE</div>
+      <nav class="site-nav">
+        <a href="admin.html" class="login-btn">Admin Login</a>
+      </nav>
+    </header>
 
-  <!-- LOGIN MODAL -->
-  <div id="login-modal" class="modal">
-    <div class="modal-content">
-      <h2>Admin Login</h2>
-      <input type="email" id="admin-email" placeholder="Email" />
-      <input type="password" id="admin-password" placeholder="Password" />
-      <button id="login-submit">Login</button>
-      <button id="login-cancel">Cancel</button>
-    </div>
+    <main>
+      <!-- PRODUCTS SECTION -->
+      <section id="products" class="products-section">
+        <h2>Our Collection</h2>
+        <div id="product-list" class="product-list">
+          <!-- JS will inject product cards here -->
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2023 ASTRE Clothing. All rights reserved.</p>
+    </footer>
   </div>
-
-  <!-- ADMIN PANEL -->
-  <aside id="admin-panel">
-    <h2>Admin Panel</h2>
-    <button id="logout-btn">Logout</button>
-
-    <h3>Add Product</h3>
-    <form id="product-form">
-      <input type="text"    id="product-title"      placeholder="Title" required />
-      <input type="number"  id="product-price"      placeholder="Price" step="0.01" required />
-      <input type="file"    id="product-image-file" accept="image/*" required />
-      <button type="submit">Add Product</button>
-    </form>
-
-    <h3>Orders</h3>
-    <div id="orders-list"></div>
-  </aside>
-
-  <!-- HERO SECTION -->
-  <header id="hero">
-    <div class="nebula"></div>
-    <div class="content">
-      <h1>Explore the Universe in Style</h1>
-      <a class="btn" href="#shop">Shop Now</a>
-    </div>
-  </header>
-
-  <!-- SHOP SECTION -->
-  <section id="shop">
-    <h2>Featured Collection</h2>
-    <div id="product-grid" class="product-grid"></div>
-  </section>
-
-  <!-- ABOUT & CONTACT (optional placeholders) -->
-  <section id="about">
-    <h2>About ASTRE</h2>
-    <p>
-      ASTRE is a space-themed clothing brand dedicated to blending cosmic aesthetics with
-      premium comfort. Each design is inspired by the vastness of the universe.
-    </p>
-  </section>
-  <section id="contact">
-    <h2>Contact Us</h2>
-    <p>Email: support@astre.com</p>
-    <p>Phone: +1 (555) 123-4567</p>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    &copy; 2025 ASTRE. All rights reserved.
-    <div class="social">
-      <a href="#">Instagram</a>
-      <a href="#">Facebook</a>
-      <a href="#">Twitter</a>
-    </div>
-  </footer>
-
-  <!-- MAIN SCRIPT -->
-  <script src="app.js"></script>
-  <!-- FIREBASE COMPAT SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </body>
 </html>
