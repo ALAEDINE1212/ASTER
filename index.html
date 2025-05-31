@@ -1,197 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>ASTRE – Explore the Universe in Style</title>
-  <style>
-    /* === RESET & BASE === */
-    * { margin:0; padding:0; box-sizing:border-box }
-    html, body {
-      width:100%; height:100%;
-      background:#000; color:#fff;
-      font-family:'Helvetica Neue',Arial,sans-serif;
-      overflow-x:hidden;
-    }
-    a { color:inherit; text-decoration:none }
-
-    /* === LOADER === */
-    #loader {
-      position:fixed; top:0; left:0;
-      width:100%; height:100%;
-      background:#000;
-      display:flex; align-items:center; justify-content:center;
-      flex-direction:column;
-      z-index:1000;
-      opacity:1; transition:opacity .5s ease;
-    }
-    #starfield, #lightning-svg, #flash {
-      position:absolute; top:0; left:0;
-      width:100%; height:100%;
-      pointer-events:none;
-    }
-    #starfield { z-index:1 }
-    #lightning-svg { z-index:2 }
-    #flash { z-index:3; background:#fff; opacity:0 }
-    #intro-logo {
-      position:relative; z-index:4;
-      width:250px;
-      opacity:0; transform:scale(0.6);
-      transition:opacity .5s ease,transform .5s ease;
-    }
-
-    /* === CAMERA SHAKE === */
-    @keyframes shake {
-      0%,100% { transform:translate(0,0) }
-      20% { transform:translate(-5px,5px) }
-      40% { transform:translate(5px,-5px) }
-      60% { transform:translate(-5px,-5px) }
-      80% { transform:translate(5px,5px) }
-    }
-
-    /* === NAVIGATION === */
-    nav {
-      position:fixed; top:0; left:0;
-      width:100%; padding:15px 30px;
-      display:flex; align-items:center; justify-content:flex-start;
-      background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
-      z-index:500;
-    }
-    #login-btn {
-      margin-right:20px; padding:8px 16px;
-      border:2px solid #fff; background:transparent; color:#fff;
-      cursor:pointer; transition:background .3s;
-    }
-    #login-btn:hover { background:rgba(255,255,255,0.1) }
-    .nav-logo { height:40px; margin-right:auto }
-    nav .links a {
-      margin-left:20px; font-size:.95rem; transition:color .3s;
-    }
-    nav .links a:hover { color:#0ff }
-
-    /* === LOGIN MODAL === */
-    .modal {
-      position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.8);
-      display:flex; align-items:center; justify-content:center;
-      opacity:0; visibility:hidden; transition:opacity .3s;
-      z-index:2000;
-    }
-    .modal.active {
-      opacity:1; visibility:visible;
-    }
-    .modal-content {
-      background:#111; padding:20px; border-radius:8px;
-      width:280px; text-align:center;
-    }
-    .modal-content input,
-    .modal-content button {
-      width:100%; padding:8px; margin-bottom:10px;
-      border:none; border-radius:4px;
-    }
-    .modal-content button {
-      margin-top:5px; background:#222; color:#fff;
-      cursor:pointer; transition:background .3s;
-    }
-    .modal-content button:hover { background:#333 }
-
-    /* === ADMIN PANEL === */
-    #admin-panel {
-      position:fixed; top:60px; right:0;
-      width:300px; height:calc(100% - 60px);
-      background:#111; padding:20px;
-      box-shadow:-2px 0 8px rgba(0,0,0,0.6);
-      overflow:auto; z-index:900; display:none;
-    }
-    #admin-panel h2 { margin-bottom:10px }
-    #admin-panel h3 { margin-top:20px; margin-bottom:10px }
-    #admin-panel input,
-    #admin-panel form button {
-      width:100%; padding:8px; margin-bottom:10px;
-      border:none; border-radius:4px;
-    }
-    #admin-panel form button {
-      background:#222; color:#fff; cursor:pointer;
-      transition:background .3s;
-    }
-    #admin-panel form button:hover { background:#333 }
-
-    /* === HERO === */
-    header#hero {
-      position:relative; overflow:hidden;
-      height:100vh; display:flex;
-      align-items:center; justify-content:center;
-      text-align:center; padding:0 20px;
-    }
-    header#hero .nebula {
-      position:absolute; top:0; left:0;
-      width:100%; height:100%;
-      background:url('assets/nebula.jpg') center/cover no-repeat;
-      will-change:transform; pointer-events:none;
-    }
-    header#hero .content { position:relative; z-index:1 }
-    header#hero h1 {
-      font-size:3rem; margin-bottom:20px;
-      text-shadow:0 0 15px rgba(0,0,0,.7);
-    }
-    .btn {
-      display:inline-block; padding:12px 28px;
-      border:2px solid #fff; text-transform:uppercase;
-      letter-spacing:2px;
-      transition:background .3s,transform .2s;
-    }
-    .btn:hover { background:rgba(255,255,255,.1); transform:scale(1.05) }
-
-    /* === SHOP === */
-    #shop { padding:60px 30px; background:#000011 }
-    #shop h2 { text-align:center; font-size:2rem; margin-bottom:40px }
-    .product-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-      gap:30px;
-    }
-    .product-card {
-      background:#111; border-radius:8px; overflow:hidden;
-      box-shadow:0 0 12px rgba(0,0,0,.6);
-      transition:transform .3s;
-    }
-    .product-card:hover { transform:translateY(-8px) }
-    .product-card img { width:100%; display:block }
-    .product-info { padding:20px }
-    .product-info h3 { font-size:1.2rem; margin-bottom:8px }
-    .product-info .price { font-weight:700; margin-bottom:12px }
-    .product-info .buy-btn {
-      padding:8px 16px; border:2px solid #fff;
-      background:transparent; color:#fff; cursor:pointer;
-      transition:background .3s;
-    }
-    .product-info .buy-btn:hover { background:rgba(255,255,255,0.1) }
-
-    /* === FOOTER === */
-    footer {
-      text-align:center; padding:30px 20px;
-      background:#000014; font-size:.85rem; color:#777;
-    }
-    footer .social a {
-      margin:0 8px; transition:color .3s;
-    }
-    footer .social a:hover { color:#0ff }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASTRE | Clothing Ecommerce</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <!-- LOADER -->
   <div id="loader">
     <canvas id="starfield"></canvas>
     <svg id="lightning-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
     <div id="flash"></div>
-    <img id="intro-logo" src="assets/logo.png" alt="ASTRE Logo">
+    <img id="intro-logo" src="assets/logo.png" alt="ASTRE Logo" />
   </div>
 
   <!-- NAVIGATION -->
   <nav>
     <button id="login-btn">Admin Login</button>
-    <img class="nav-logo" src="assets/logo.png" alt="ASTRE Logo">
+    <img class="nav-logo" src="assets/logo.png" alt="ASTRE Logo" />
     <div class="links">
       <a href="#hero">Home</a>
       <a href="#shop">Shop</a>
@@ -204,7 +31,7 @@
   <div id="login-modal" class="modal">
     <div class="modal-content">
       <h2>Admin Login</h2>
-      <input type="email"   id="admin-email"    placeholder="Email" />
+      <input type="email" id="admin-email" placeholder="Email" />
       <input type="password" id="admin-password" placeholder="Password" />
       <button id="login-submit">Login</button>
       <button id="login-cancel">Cancel</button>
@@ -212,23 +39,23 @@
   </div>
 
   <!-- ADMIN PANEL -->
-  <div id="admin-panel">
+  <aside id="admin-panel">
     <h2>Admin Panel</h2>
     <button id="logout-btn">Logout</button>
 
     <h3>Add Product</h3>
     <form id="product-form">
-      <input type="text"   id="product-title"      placeholder="Title" required />
-      <input type="number" id="product-price"      placeholder="Price" step="0.01" required />
-      <input type="file"   id="product-image-file" accept="image/*" required />
+      <input type="text"    id="product-title"      placeholder="Title" required />
+      <input type="number"  id="product-price"      placeholder="Price" step="0.01" required />
+      <input type="file"    id="product-image-file" accept="image/*" required />
       <button type="submit">Add Product</button>
     </form>
 
     <h3>Orders</h3>
     <div id="orders-list"></div>
-  </div>
+  </aside>
 
-  <!-- HERO -->
+  <!-- HERO SECTION -->
   <header id="hero">
     <div class="nebula"></div>
     <div class="content">
@@ -237,10 +64,24 @@
     </div>
   </header>
 
-  <!-- SHOP -->
+  <!-- SHOP SECTION -->
   <section id="shop">
     <h2>Featured Collection</h2>
     <div id="product-grid" class="product-grid"></div>
+  </section>
+
+  <!-- ABOUT & CONTACT (optional placeholders) -->
+  <section id="about">
+    <h2>About ASTRE</h2>
+    <p>
+      ASTRE is a space-themed clothing brand dedicated to blending cosmic aesthetics with
+      premium comfort. Each design is inspired by the vastness of the universe.
+    </p>
+  </section>
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: support@astre.com</p>
+    <p>Phone: +1 (555) 123-4567</p>
   </section>
 
   <!-- FOOTER -->
@@ -253,242 +94,12 @@
     </div>
   </footer>
 
-  <!-- STARFIELD + LIGHTNING + PARALLAX -->
-  <script>
-    window.addEventListener('load', () => {
-      const loader    = document.getElementById('loader');
-      const introLogo = document.getElementById('intro-logo');
-      const sC        = document.getElementById('starfield');
-      const svg       = document.getElementById('lightning-svg');
-      const flash     = document.getElementById('flash');
-      const nebula    = document.querySelector('.nebula');
-      const sCtx      = sC.getContext('2d');
-      let w = sC.width  = window.innerWidth;
-      let h = sC.height = window.innerHeight;
-      let starAnimId;
-
-      // STARFIELD
-      const stars = Array.from({length:600}, () => ({
-        x: Math.random()*w, y: Math.random()*h, z: Math.random()*w
-      }));
-      function drawStars(){
-        sCtx.fillStyle = '#000';
-        sCtx.fillRect(0,0,w,h);
-        sCtx.fillStyle = '#fff';
-        stars.forEach(s => {
-          s.z -= 2;
-          if (s.z <= 0) { s.x=Math.random()*w; s.y=Math.random()*h; s.z=w; }
-          const k  = 128/s.z;
-          const px = (s.x-w/2)*k+w/2;
-          const py = (s.y-h/2)*k+h/2;
-          const sz = (1 - s.z/w)*3;
-          sCtx.beginPath();
-          sCtx.arc(px,py,sz,0,2*Math.PI);
-          sCtx.fill();
-        });
-        starAnimId = requestAnimationFrame(drawStars);
-      }
-
-      // SVG LIGHTNING
-      function makeBolt(x1,y1,x2,y2,disp){
-        if (disp<1) return [[x1,y1],[x2,y2]];
-        const mx=(x1+x2)/2 + (Math.random()-0.5)*disp;
-        const my=(y1+y2)/2 + (Math.random()-0.5)*disp;
-        const left=makeBolt(x1,y1,mx,my,disp/2);
-        const right=makeBolt(mx,my,x2,y2,disp/2);
-        return [...left, ...right.slice(1)];
-      }
-      function drawBolts(){
-        svg.innerHTML='';
-        const layers=[
-          {disp:30, stroke:2,   opacity:0.8},
-          {disp:15, stroke:1.2, opacity:0.6},
-          {disp:6,  stroke:0.7, opacity:0.4}
-        ];
-        layers.forEach(l=>{
-          const pts = makeBolt(10+Math.random()*80,0,50,50,l.disp);
-          const poly = document.createElementNS(
-            'http://www.w3.org/2000/svg','polyline'
-          );
-          poly.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
-          poly.setAttribute('stroke','#fff');
-          poly.setAttribute('stroke-width',l.stroke);
-          poly.setAttribute('fill','none');
-          poly.setAttribute('opacity',l.opacity);
-          svg.appendChild(poly);
-          const L = poly.getTotalLength();
-          poly.style.strokeDasharray  = L;
-          poly.style.strokeDashoffset = L;
-          poly.style.transition        = 'stroke-dashoffset .25s ease-out';
-          requestAnimationFrame(() => poly.style.strokeDashoffset = '0');
-        });
-      }
-
-      // PARALLAX
-      function initParallax(){
-        window.addEventListener('mousemove', e => {
-          const px = (e.clientX/window.innerWidth  - .5)*20;
-          const py = (e.clientY/window.innerHeight - .5)*20;
-          nebula.style.transform = `translate(${px}px,${py}px)`;
-        });
-      }
-
-      // INTRO SEQUENCE
-      function playIntro(){
-        drawBolts();
-        setTimeout(()=>{
-          flash.style.transition='opacity .1s ease-in';
-          flash.style.opacity=1;
-          loader.style.animation='shake .4s';
-          setTimeout(()=>flash.style.opacity=0,100);
-        },300);
-        setTimeout(()=>{
-          introLogo.style.opacity=1;
-          introLogo.style.transform='scale(1)';
-        },450);
-        setTimeout(()=>{
-          cancelAnimationFrame(starAnimId);
-          loader.style.opacity=0;
-          setTimeout(()=>{
-            loader.style.display='none';
-            initParallax();
-          },500);
-        },2000);
-      }
-
-      drawStars();
-      setTimeout(playIntro,800);
-      window.addEventListener('resize',()=>{
-        w=sC.width=window.innerWidth;
-        h=sC.height=window.innerHeight;
-      });
-    });
-  </script>
-
+  <!-- MAIN SCRIPT -->
+  <script src="app.js"></script>
   <!-- FIREBASE COMPAT SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-  <script>
-    // Initialize Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyA2HkqA6nONPzhxbcrLuuqKmeVIdVRYNHM",
-      authDomain: "aster-7523e.firebaseapp.com",
-      projectId: "aster-7523e",
-      storageBucket: "aster-7523e.appspot.com",
-      messagingSenderId: "175960778042",
-      appId: "1:175960778042:web:6f3f0051c25a8cecaadc03",
-      measurementId: "G-NDSZZX3H1G",
-      databaseURL: "https://aster-7523e-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-
-    const auth    = firebase.auth();
-    const db      = firebase.database();
-    const storage = firebase.storage();
-
-    // UI refs
-    const loginBtn    = document.getElementById('login-btn');
-    const loginModal  = document.getElementById('login-modal');
-    const loginSubmit = document.getElementById('login-submit');
-    const loginCancel = document.getElementById('login-cancel');
-    const logoutBtn   = document.getElementById('logout-btn');
-    const adminPanel  = document.getElementById('admin-panel');
-    const productForm = document.getElementById('product-form');
-    const ordersList  = document.getElementById('orders-list');
-    const productGrid = document.getElementById('product-grid');
-    let productsData  = {};
-
-    // Auth flow
-    loginBtn.addEventListener('click',   ()=> loginModal.classList.add('active'));
-    loginCancel.addEventListener('click',()=> loginModal.classList.remove('active'));
-    loginSubmit.addEventListener('click', ()=>{
-      const email = document.getElementById('admin-email').value;
-      const pw    = document.getElementById('admin-password').value;
-      auth.signInWithEmailAndPassword(email, pw)
-        .then(()=> loginModal.classList.remove('active'))
-        .catch(e=> alert('Login failed: '+e.message));
-    });
-    logoutBtn.addEventListener('click', ()=> auth.signOut());
-
-    auth.onAuthStateChanged(user=>{
-      if(user){
-        loginBtn.style.display   = 'none';
-        adminPanel.style.display = 'block';
-      } else {
-        loginBtn.style.display   = 'inline-block';
-        adminPanel.style.display = 'none';
-      }
-    });
-
-    // Add product
-    productForm.addEventListener('submit', e=>{
-      e.preventDefault();
-      if(!auth.currentUser) return alert('🚫 Please log in as admin first.');
-      const title = document.getElementById('product-title').value;
-      const price = document.getElementById('product-price').value;
-      const file  = document.getElementById('product-image-file').files[0];
-      if(!file) return alert('Please select an image.');
-
-      const path     = `product_images/${Date.now()}_${file.name}`;
-      const storeRef = storage.ref(path);
-      storeRef.put(file)
-        .then(snap=> snap.ref.getDownloadURL())
-        .then(url=>{
-          return db.ref('products').push({ title, price, imageUrl: url });
-        })
-        .then(()=>{
-          productForm.reset();
-          alert('✅ Product added!');
-        })
-        .catch(err=> alert('Error: '+err.message));
-    });
-
-    // Render products & Buy buttons
-    db.ref('products').on('value', snap=>{
-      productsData = snap.val()||{};
-      productGrid.innerHTML = '';
-      Object.entries(productsData).forEach(([id,p])=>{
-        const d = document.createElement('div');
-        d.className='product-card';
-        d.innerHTML=`
-          <img src="${p.imageUrl}" alt="${p.title}">
-          <div class="product-info">
-            <h3>${p.title}</h3>
-            <p class="price">$${parseFloat(p.price).toFixed(2)}</p>
-            <button class="buy-btn" data-id="${id}">Buy Now</button>
-          </div>`;
-        productGrid.appendChild(d);
-      });
-      document.querySelectorAll('.buy-btn').forEach(btn=>{
-        btn.onclick=(()=>{
-          const id=btn.dataset.id, prod=productsData[id];
-          db.ref('orders').push({
-            productId: id,
-            product: prod,
-            timestamp: Date.now()
-          });
-          alert('✅ Order placed!');
-        });
-      });
-    });
-
-    // Render orders
-    db.ref('orders').on('value', snap=>{
-      const orders = snap.val()||{};
-      ordersList.innerHTML='';
-      Object.entries(orders).forEach(([oid,o])=>{
-        const div = document.createElement('div');
-        div.innerHTML=`
-          <strong>Order ID:</strong> ${oid}<br>
-          <strong>Product:</strong> ${o.product.title} ($${o.product.price})<hr>
-        `;
-        ordersList.appendChild(div);
-      });
-    });
-  </script>
 </body>
 </html>
-
-
