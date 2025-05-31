@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
   <title>ASTRE Admin Dashboard</title>
-
-  <!-- Shared CSS (contains both public and admin styles) -->
+  <!-- Shared CSS -->
   <link rel="stylesheet" href="styles.css" />
-
-  <!-- GSAP (optional, for any header animations) -->
+  <!-- GSAP for optional header animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"></script>
-
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
   <!-- Our admin JavaScript (module) -->
   <script type="module" src="admin.js" defer></script>
 </head>
-<!--
-  Adding class="admin-container-loaded" on body activates the overflow override
-  in styles.css so that the dashboard content can scroll and become visible.
--->
+<!-- Adding class="admin-container-loaded" so CSS allows scrolling -->
 <body class="admin-container-loaded">
   <div class="admin-container">
     <!-- ============================
@@ -25,23 +26,16 @@
          ============================ -->
     <header class="site-header">
       <div class="site-logo">ASTRE Admin</div>
-      <!--
-        The Logout button is hidden until user is authenticated.
-        It has id="logoutBtn" so the JS can toggle it.
-      -->
       <button id="logoutBtn" class="login-btn hidden">Logout</button>
     </header>
 
     <!-- ============================
-         LOGIN SECTION
-         Centered, modern “card” style
-         with Floating Labels
+         LOGIN CARD
          ============================ -->
     <div id="loginWrapper" class="admin-login-container">
       <div class="login-card" id="loginSection">
         <h2>Admin Login</h2>
         <form id="loginForm" autocomplete="off">
-          <!-- EMAIL FIELD -->
           <div class="form-group">
             <input
               type="email"
@@ -51,8 +45,6 @@
             />
             <label for="loginEmail">Email Address</label>
           </div>
-
-          <!-- PASSWORD FIELD -->
           <div class="form-group">
             <input
               type="password"
@@ -62,16 +54,13 @@
             />
             <label for="loginPassword">Password</label>
           </div>
-
-          <!-- SUBMIT BUTTON -->
           <button type="submit">Login</button>
         </form>
       </div>
     </div>
 
     <!-- ============================
-         DASHBOARD SECTION
-         Hidden until user is authenticated
+         ADMIN DASHBOARD (Hidden initially)
          ============================ -->
     <main id="dashboardSection" class="hidden">
       <!-- ADD NEW PRODUCT -->
@@ -119,10 +108,13 @@
         </form>
       </section>
 
-      <!-- EXISTING PRODUCTS (with Remove buttons) -->
+      <!-- EXISTING PRODUCTS -->
       <section id="existingProductsSection" class="admin-section">
         <h3>Existing Products</h3>
-        <div id="existingProductsList" class="product-list"></div>
+        <div
+          id="existingProductsList"
+          class="product-list-admin"
+        ></div>
       </section>
 
       <!-- ORDERS TABLE -->
@@ -138,7 +130,7 @@
             </tr>
           </thead>
           <tbody>
-            <!-- JS will inject order rows here -->
+            <!-- Rows will be injected here -->
           </tbody>
         </table>
       </section>

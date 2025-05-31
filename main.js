@@ -1,5 +1,5 @@
 // ------------------------------
-// 1) IMPORT FIREBASE SDKS
+// 1) IMPORT & INITIALIZE FIREBASE
 // ------------------------------
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
 import {
@@ -7,58 +7,48 @@ import {
   ref as dbRef,
   onValue,
   push,
-  set,
+  set
 } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
 
-// ------------------------------
-// 2) FIREBASE CONFIG & INITIALIZATION
-// ------------------------------
+// Your Firebase project’s config (from the snippet you provided)
 const firebaseConfig = {
-  apiKey: "AIzaSyA2HkqA6nONPzhxbcrLuuqKmeVIdVRYNHM",
-  authDomain: "aster-7523e.firebaseapp.com",
-  databaseURL: "https://aster-7523e-default-rtdb.firebaseio.com",
-  projectId: "aster-7523e",
-  storageBucket: "aster-7523e.firebasestorage.app",
-  messagingSenderId: "175960778042",
-  appId: "1:175960778042:web:6f3f0051c25a8cecaadc03",
-  measurementId: "G-NDSZZX3H1G"
+  apiKey: "AIzaSyDx0t5M9QRPQoRBaMDtDUmGICCX8r_k2nw",
+  authDomain: "astre-f93d3.firebaseapp.com",
+  databaseURL: "https://astre-f93d3-default-rtdb.firebaseio.com",
+  projectId: "astre-f93d3",
+  storageBucket: "astre-f93d3.firebasestorage.app",
+  messagingSenderId: "175273255912",
+  appId: "1:175273255912:web:f2da15b4b4a32064a3fa5d",
+  measurementId: "G-5X6K01L2Z0"
 };
 
-// Initialize Firebase App & Database
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // ------------------------------
-// 3) INTRO ANIMATION (STARFIELD + SVG “AS” LIGHTNING)
+// 2) STARFIELD SETUP
 // ------------------------------
-const introCanvas    = document.getElementById('introCanvas');
-const introLogo      = document.getElementById('introLogo');
-const logoText       = document.getElementById('logoText');
-const flashOverlay   = document.getElementById('flashOverlay');
-const mainContent    = document.getElementById('mainContent');
-const headerLogoText = document.querySelector('.site-logo');
-
+const starCanvas = document.getElementById('starfield');
+const starCtx = starCanvas.getContext('2d');
 let stars = [];
 
-// Resize canvas to full viewport
+// Resize canvas to fill screen
 function resizeCanvas() {
-  introCanvas.width  = window.innerWidth;
-  introCanvas.height = window.innerHeight;
+  starCanvas.width = window.innerWidth;
+  starCanvas.height = window.innerHeight;
   initStars();
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-const ctx = introCanvas.getContext('2d');
-
-// STARFIELD SETUP
+// Initialize twinkling stars
 function initStars() {
-  const numStars = 300;
   stars = [];
+  const numStars = 300;
   for (let i = 0; i < numStars; i++) {
     stars.push({
-      x: Math.random() * introCanvas.width,
-      y: Math.random() * introCanvas.height,
+      x: Math.random() * starCanvas.width,
+      y: Math.random() * starCanvas.height,
       radius: Math.random() * 1.5 + 0.3,
       speed: Math.random() * 0.6 + 0.2,
       alpha: Math.random() * 0.5 + 0.2
@@ -66,105 +56,115 @@ function initStars() {
   }
 }
 
-// ANIMATE STARFIELD (downward drift + twinkle)
 function animateStars() {
-  ctx.clearRect(0, 0, introCanvas.width, introCanvas.height);
-  stars.forEach((star) => {
-    // Twinkle
+  starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+  stars.forEach(star => {
     star.alpha += (Math.random() - 0.5) * 0.02;
     if (star.alpha < 0.2) star.alpha = 0.2;
     if (star.alpha > 1) star.alpha = 1;
 
-    // Move downward
     star.y += star.speed;
-    if (star.y > introCanvas.height) {
+    if (star.y > starCanvas.height) {
       star.y = 0;
-      star.x = Math.random() * introCanvas.width;
+      star.x = Math.random() * starCanvas.width;
       star.radius = Math.random() * 1.5 + 0.3;
       star.speed = Math.random() * 0.6 + 0.2;
     }
 
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
-    ctx.fill();
+    starCtx.beginPath();
+    starCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+    starCtx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+    starCtx.fill();
   });
 
   requestAnimationFrame(animateStars);
 }
 
-// RUN INTRO ANIMATION
-function runIntroAnimation() {
-  // 1) Create a GSAP timeline for the sequence
+// Start the starfield animation
+initStars();
+animateStars();
+
+// ------------------------------
+// 3) RUN “AS” INTRO ANIMATION
+// ------------------------------
+const logoText = document.getElementById('logoText');
+const flashScreen = document.getElementById('flashScreen');
+const introContainer = document.getElementById('introContainer');
+const mainContent = document.getElementById('mainContent');
+const headerLogo = document.querySelector('.site-logo');
+
+function runIntro() {
   const tl = gsap.timeline();
 
-  // 1a) Draw “AS” (strokeDashoffset: 1200 → 0) over 1s
+  // 1) Draw the SVG stroke (dashoffset: 1000 → 0)
   tl.to(logoText, {
     strokeDashoffset: 0,
     duration: 1,
-    ease: "power2.inOut"
+    ease: 'power2.inOut'
   });
 
-  // 1b) Flash the screen (lightning strike) immediately after drawing finishes
-  tl.to(flashOverlay, {
+  // 2) Flash like lightning
+  tl.to(flashScreen, {
     opacity: 1,
     duration: 0.08,
-    ease: "power1.in",
+    ease: 'power1.in',
     yoyo: true,
     repeat: 1
   });
 
-  // 1c) After the flash, quickly flicker & glow the “AS” for 2s
+  // 3) Slight flicker/glow
   tl.to(logoText, {
     onStart: () => {
-      logoText.style.animation = "logo-glow-flicker 2s ease-in-out";
+      logoText.style.animation = 'as-flicker 2s ease-in-out';
     },
     duration: 0.1
   });
 
-  // 1d) Hold for a moment, then fade out #intro over 1s
-  tl.to('#intro', {
+  // 4) Fade out intro, reveal main content
+  tl.to(introContainer, {
     opacity: 0,
     duration: 1,
-    ease: "power2.out",
-    delay: 1.4, // let the glow run briefly
+    ease: 'power2.out',
+    delay: 1.4,
     onComplete: () => {
-      document.getElementById('intro').style.display = 'none';
-      // Reveal main content
+      introContainer.style.display = 'none';
       document.body.style.overflow = 'auto';
       mainContent.classList.remove('hidden');
       gsap.to(mainContent, { opacity: 1, duration: 1 });
-      // Finally, fade in & glow the header “ASTRE”
-      gsap.to(headerLogoText, { opacity: 1, duration: 1, onComplete: () => {
-        headerLogoText.style.animation = "header-glow 3s ease-in-out infinite";
-      }});
+      // Fade in & glow the header logo
+      gsap.to(headerLogo, {
+        opacity: 1,
+        duration: 1,
+        onComplete: () => {
+          headerLogo.style.animation = 'header-glow 3s ease-in-out infinite';
+        }
+      });
     }
   });
 }
 
 // ------------------------------
-// 4) LOAD PRODUCTS & RENDER
+// 4) LOAD & DISPLAY PRODUCTS
 // ------------------------------
-const productsContainer = document.getElementById('product-list');
+const productContainer = document.getElementById('productList');
 
-function loadAndRenderProducts() {
+function loadProducts() {
   const productsRef = dbRef(database, 'products');
-  onValue(productsRef, (snapshot) => {
+  onValue(productsRef, snapshot => {
     const data = snapshot.val();
-    renderProductCards(data);
+    renderProducts(data);
   });
 }
 
-function renderProductCards(products) {
-  productsContainer.innerHTML = ''; // clear existing
-
+function renderProducts(products) {
+  productContainer.innerHTML = '';
   if (!products) {
-    productsContainer.innerHTML =
+    productContainer.innerHTML =
       '<p style="color:#777; text-align:center;">No products available.</p>';
     return;
   }
 
-  Object.keys(products).forEach((key) => {
+  Object.keys(products).forEach(key => {
     const { name, description, price, imageUrl } = products[key];
 
     // Create card
@@ -197,14 +197,16 @@ function renderProductCards(products) {
     const buyBtn = document.createElement('button');
     buyBtn.classList.add('buy-btn');
     buyBtn.textContent = 'Buy Now';
-    buyBtn.addEventListener('click', () => handleBuyClick(key, name));
+    buyBtn.addEventListener('click', () =>
+      handleBuy(key, name)
+    );
     card.appendChild(buyBtn);
 
-    productsContainer.appendChild(card);
+    productContainer.appendChild(card);
   });
 }
 
-function handleBuyClick(productId, productName) {
+function handleBuy(productId, productName) {
   const email = prompt(`Enter your email to order "${productName}":`);
   if (!email) return;
 
@@ -213,30 +215,22 @@ function handleBuyClick(productId, productName) {
   set(newOrderRef, {
     productId,
     email,
-    timestamp: Date.now(),
+    timestamp: Date.now()
   })
     .then(() => {
       alert('Thank you! Your order has been placed.');
     })
-    .catch((err) => {
+    .catch(err => {
       console.error('Error placing order:', err);
       alert('Failed to place order. Please try again later.');
     });
 }
 
 // ------------------------------
-// 5) ONCE DOM CONTENT IS LOADED
+// 5) ONCE DOM CONTENT LOADED
 // ------------------------------
 window.addEventListener('DOMContentLoaded', () => {
-  // 1) Start the starfield
-  initStars();
-  animateStars();
-
-  // 2) Run the intro animation
-  runIntroAnimation();
-
-  // 3) After intro fully finishes (~4.5s + fade), load products
-  setTimeout(() => {
-    loadAndRenderProducts();
-  }, 5500);
+  // Run intro, then load products after a short delay
+  runIntro();
+  setTimeout(loadProducts, 5000); // give time for intro (~5s)
 });

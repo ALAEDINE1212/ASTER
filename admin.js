@@ -1,5 +1,5 @@
 // ------------------------------
-// 1) IMPORT FIREBASE SDKS
+// 1) IMPORT & INITIALIZE FIREBASE
 // ------------------------------
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
 import {
@@ -17,34 +17,32 @@ import {
   remove
 } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
 
-// ------------------------------
-// 2) FIREBASE CONFIG & INITIALIZATION
-// ------------------------------
+// Your Firebase project’s config (provided by you)
 const firebaseConfig = {
-  apiKey: "AIzaSyA2HkqA6nONPzhxbcrLuuqKmeVIdVRYNHM",
-  authDomain: "aster-7523e.firebaseapp.com",
-  databaseURL: "https://aster-7523e-default-rtdb.firebaseio.com",
-  projectId: "aster-7523e",
-  storageBucket: "aster-7523e.firebasestorage.app",
-  messagingSenderId: "175960778042",
-  appId: "1:175960778042:web:6f3f0051c25a8cecaadc03",
-  measurementId: "G-NDSZZX3H1G"
+  apiKey: "AIzaSyDx0t5M9QRPQoRBaMDtDUmGICCX8r_k2nw",
+  authDomain: "astre-f93d3.firebaseapp.com",
+  databaseURL: "https://astre-f93d3-default-rtdb.firebaseio.com",
+  projectId: "astre-f93d3",
+  storageBucket: "astre-f93d3.firebasestorage.app",
+  messagingSenderId: "175273255912",
+  appId: "1:175273255912:web:f2da15b4b4a32064a3fa5d",
+  measurementId: "G-5X6K01L2Z0"
 };
 
-const app       = initializeApp(firebaseConfig);
-const auth      = getAuth(app);
-const database  = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
 
 // ------------------------------
-// 3) DOM ELEMENTS (BY ID – MUST MATCH admin.html)
+// 2) REFERENCE DOM ELEMENTS
 // ------------------------------
-const loginWrapper         = document.getElementById('loginWrapper');
-const loginForm            = document.getElementById('loginForm');
-const loginEmail           = document.getElementById('loginEmail');
-const loginPassword        = document.getElementById('loginPassword');
+const loginWrapper     = document.getElementById('loginWrapper');
+const loginForm        = document.getElementById('loginForm');
+const loginEmail       = document.getElementById('loginEmail');
+const loginPassword    = document.getElementById('loginPassword');
 
-const dashboardSection     = document.getElementById('dashboardSection');
-const logoutBtn            = document.getElementById('logoutBtn');
+const dashboardSection = document.getElementById('dashboardSection');
+const logoutBtn        = document.getElementById('logoutBtn');
 
 const addProductForm       = document.getElementById('addProductForm');
 const prodNameInput        = document.getElementById('prodName');
@@ -55,18 +53,15 @@ const existingProductsList = document.getElementById('existingProductsList');
 const ordersTableBody      = document.querySelector('#ordersTable tbody');
 
 // ------------------------------
-// 4) AUTHENTICATION HANDLING
+// 3) AUTH STATE HANDLING
 // ------------------------------
 onAuthStateChanged(auth, (user) => {
   console.log("onAuthStateChanged fired; user =", user);
-
   if (user) {
     console.log("→ user is signed in; hiding login, showing dashboard.");
     loginWrapper.classList.add('hidden');
     dashboardSection.classList.remove('hidden');
     logoutBtn.classList.remove('hidden');
-
-    // Once signed in, load “Existing Products” and “Orders”
     loadExistingProducts();
     loadOrders();
   } else {
@@ -77,17 +72,15 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Handle Login Form Submit
+// Handle login form submission
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const email    = loginEmail.value.trim();
   const password = loginPassword.value;
-
   if (!email || !password) {
     alert("Please enter both email and password.");
     return;
   }
-
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
       console.log("signInWithEmailAndPassword → success");
@@ -99,33 +92,30 @@ loginForm.addEventListener('submit', (e) => {
     });
 });
 
-// Handle Logout Button
+// Handle logout
 logoutBtn.addEventListener('click', () => {
   signOut(auth)
     .then(() => {
       console.log("User signed out.");
     })
-    .catch((err) => {
+    .catch(err => {
       console.error("Logout error:", err);
     });
 });
 
 // ------------------------------
-// 5) ADD NEW PRODUCT
+// 4) ADD NEW PRODUCT
 // ------------------------------
 addProductForm.addEventListener('submit', (e) => {
   e.preventDefault();
-
   const name        = prodNameInput.value.trim();
   const description = prodDescInput.value.trim();
   const price       = parseFloat(prodPriceInput.value).toFixed(2);
   const imageUrl    = prodImageInput.value.trim();
-
   if (!name || !description || !price || !imageUrl) {
     alert('Please fill in all fields.');
     return;
   }
-
   const productsRef = dbRef(database, 'products');
   const newProdRef  = push(productsRef);
   set(newProdRef, { name, description, price, imageUrl })
@@ -133,14 +123,14 @@ addProductForm.addEventListener('submit', (e) => {
       alert('Product added successfully!');
       addProductForm.reset();
     })
-    .catch((err) => {
+    .catch(err => {
       console.error('Error adding product:', err);
       alert('Failed to add product.');
     });
 });
 
 // ------------------------------
-// 6) LOAD & DISPLAY EXISTING PRODUCTS
+// 5) LOAD & DISPLAY EXISTING PRODUCTS
 // ------------------------------
 function loadExistingProducts() {
   const productsRef = dbRef(database, 'products');
@@ -152,13 +142,11 @@ function loadExistingProducts() {
 
 function renderExistingProducts(products) {
   existingProductsList.innerHTML = '';
-
   if (!products) {
     existingProductsList.innerHTML =
       '<p style="color:#777; text-align:center;">No products found.</p>';
     return;
   }
-
   Object.keys(products).forEach((key) => {
     const { name, description, price, imageUrl } = products[key];
 
@@ -196,7 +184,6 @@ function renderExistingProducts(products) {
 
 function removeProduct(productId) {
   if (!confirm('Are you sure you want to remove this product?')) return;
-
   const singleProdRef = dbRef(database, `products/${productId}`);
   remove(singleProdRef)
     .then(() => {
@@ -209,7 +196,7 @@ function removeProduct(productId) {
 }
 
 // ------------------------------
-// 7) LOAD & DISPLAY ORDERS
+// 6) LOAD & DISPLAY ORDERS
 // ------------------------------
 function loadOrders() {
   const ordersRef = dbRef(database, 'orders');
@@ -221,23 +208,19 @@ function loadOrders() {
 
 function renderOrders(orders) {
   ordersTableBody.innerHTML = '';
-
   if (!orders) {
     ordersTableBody.innerHTML =
       '<tr><td colspan="4" style="color:#777; text-align:center;">No orders placed yet.</td></tr>';
     return;
   }
-
-  // Once, fetch all products to map productId → productName
   dbRef(database, 'products')
     .once('value')
     .then((prodSnap) => {
       const prodData = prodSnap.val() || {};
-
       Object.keys(orders).forEach((orderId) => {
         const { productId, email, timestamp } = orders[orderId];
-        const productName = prodData[productId]?.name || 'Unknown';
-
+        const productName =
+          prodData[productId]?.name || 'Unknown';
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${orderId}</td>
@@ -249,6 +232,7 @@ function renderOrders(orders) {
       });
     })
     .catch((err) => {
-      console.error("Error fetching products for orders:", err);
+      console.error('Error fetching products for orders:', err);
     });
 }
+

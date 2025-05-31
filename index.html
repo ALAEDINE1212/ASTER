@@ -2,54 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
   <title>ASTRE Clothing</title>
-
-  <!-- MAIN STYLESHEET -->
+  <!-- Link to shared CSS -->
   <link rel="stylesheet" href="styles.css" />
-
-  <!-- GSAP FOR ANIMATIONS -->
+  <!-- GSAP for animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"></script>
-
-  <!-- MAIN JAVASCRIPT (MODULE) -->
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <!-- Our main JavaScript (module) -->
   <script type="module" src="main.js" defer></script>
 </head>
 <body>
-  <!-- ================================
-       1) FULL-SCREEN ENTRY ANIMATION
-       ================================ -->
-  <div id="intro">
-    <!-- CANVAS FOR STARFIELD -->
-    <canvas id="introCanvas"></canvas>
-
-    <!-- WHITE FLASH OVERLAY FOR LIGHTNING STRIKE -->
-    <div id="flashOverlay"></div>
-
-    <!-- SVG “AS” LIGHTNING LOGO -->
-    <div id="introLogo">
+  <!-- ======================================
+       1) INTRO (STARFIELD + “AS” LIGHTNING)
+       ====================================== -->
+  <div id="introContainer">
+    <canvas id="starfield"></canvas>
+    <div id="flashScreen"></div>
+    <div id="logoWrapper">
       <svg
-        id="introLogoSVG"
+        id="asLogo"
         viewBox="0 0 600 200"
         preserveAspectRatio="xMidYMid meet"
       >
-        <!--
-          We draw “AS” with a jagged, lightning-bolt style stroke.
-          stroke-dasharray and stroke-dashoffset allow us to animate the “draw.”
-        -->
         <text
           id="logoText"
           x="50%"
           y="50%"
           text-anchor="middle"
           dominant-baseline="middle"
-          font-family="'Helvetica Neue', Arial, sans-serif"
+          font-family="Helvetica Neue, Arial, sans-serif"
           font-size="150px"
           fill="none"
           stroke="#0ff"
           stroke-width="4"
-          stroke-linejoin="bevel"
-          stroke-dasharray="1200"
-          stroke-dashoffset="1200"
+          stroke-linejoin="round"
+          stroke-dasharray="1000"
+          stroke-dashoffset="1000"
         >
           AS
         </text>
@@ -57,30 +52,30 @@
     </div>
   </div>
 
-  <!-- ================================
-       2) MAIN CONTENT (HIDDEN AT FIRST)
-       ================================ -->
+  <!-- =====================
+       2) MAIN CONTENT
+       (Hidden until intro finishes)
+       ===================== -->
   <div id="mainContent" class="hidden">
+    <!-- HEADER -->
     <header class="site-header">
-      <!-- This “ASTRE” will fade in with a neon glow after intro -->
       <div class="site-logo">ASTRE</div>
       <nav class="site-nav">
         <a href="admin.html" class="login-btn">Admin Login</a>
       </nav>
     </header>
 
-    <main>
-      <!-- PRODUCTS SECTION -->
-      <section id="products" class="products-section">
-        <h2>Our Collection</h2>
-        <div id="product-list" class="product-list">
-          <!-- JS will inject product cards here -->
-        </div>
-      </section>
+    <!-- PRODUCTS SECTION -->
+    <main class="products-section">
+      <h2>Our Collection</h2>
+      <div id="productList" class="product-grid">
+        <!-- Product cards will be injected here -->
+      </div>
     </main>
 
+    <!-- FOOTER -->
     <footer class="site-footer">
-      <p>© 2023 ASTRE Clothing. All rights reserved.</p>
+      <p>© 2025 ASTRE Clothing. All rights reserved.</p>
     </footer>
   </div>
 </body>
