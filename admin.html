@@ -5,28 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ASTRE Admin Dashboard</title>
 
-  <!-- SHARED CSS (INCLUDING ADMIN STYLES) -->
+  <!-- Shared CSS (contains both public and admin styles) -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- GSAP (OPTIONAL, for header animations) -->
+  <!-- GSAP (optional, for any header animations) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"></script>
 
-  <!-- ADMIN JAVASCRIPT (MODULE) -->
+  <!-- Our admin JavaScript (module) -->
   <script type="module" src="admin.js" defer></script>
 </head>
-<body>
+<!--
+  We add class="admin-container-loaded" here to activate the overflow override
+  in styles.css (so the dashboard content can scroll/appear).
+-->
+<body class="admin-container-loaded">
   <div class="admin-container">
-    <!-- HEADER -->
+    <!-- ============================
+         HEADER & LOGOUT BUTTON
+         ============================ -->
     <header class="site-header">
       <div class="site-logo">ASTRE Admin</div>
+      <!--
+        The Logout button is hidden until user is authenticated.
+        It has id="logoutBtn" so the JS can toggle it.
+      -->
       <button id="logoutBtn" class="login-btn hidden">Logout</button>
     </header>
 
-    <!-- LOGIN SECTION (CENTERED MODERN CARD) -->
+    <!-- ============================
+         LOGIN SECTION
+         Centered, modern “card” style
+         with Floating Labels
+         ============================ -->
     <div id="loginWrapper" class="admin-login-container">
       <div class="login-card" id="loginSection">
         <h2>Admin Login</h2>
         <form id="loginForm" autocomplete="off">
+          <!-- EMAIL FIELD -->
           <div class="form-group">
             <input
               type="email"
@@ -36,6 +51,8 @@
             />
             <label for="loginEmail">Email Address</label>
           </div>
+
+          <!-- PASSWORD FIELD -->
           <div class="form-group">
             <input
               type="password"
@@ -45,12 +62,17 @@
             />
             <label for="loginPassword">Password</label>
           </div>
+
+          <!-- SUBMIT BUTTON -->
           <button type="submit">Login</button>
         </form>
       </div>
     </div>
 
-    <!-- DASHBOARD SECTION (HIDDEN UNTIL AUTHENTICATED) -->
+    <!-- ============================
+         DASHBOARD SECTION
+         Hidden until user is authenticated
+         ============================ -->
     <main id="dashboardSection" class="hidden">
       <!-- ADD NEW PRODUCT -->
       <section id="addProductSection" class="admin-section">
@@ -97,13 +119,13 @@
         </form>
       </section>
 
-      <!-- EXISTING PRODUCTS -->
+      <!-- EXISTING PRODUCTS (with Remove buttons) -->
       <section id="existingProductsSection" class="admin-section">
         <h3>Existing Products</h3>
         <div id="existingProductsList" class="product-list"></div>
       </section>
 
-      <!-- ORDERS -->
+      <!-- ORDERS TABLE -->
       <section id="ordersSection" class="admin-section">
         <h3>Orders</h3>
         <table id="ordersTable">

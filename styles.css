@@ -1,5 +1,6 @@
 /*-------------------------------------------------------------
   GLOBAL RESET & BASE STYLES
+  (This file is shared by both index.html and admin.html)
 -------------------------------------------------------------*/
 *,
 *::before,
@@ -13,18 +14,21 @@ html,
 body {
   width: 100%;
   height: 100%;
-  overflow: hidden; /* hide overflow during intro */
+  /* Originally we hid overflow for the intro animation on index.html.
+     For the admin page, we will override this later when the page loads. */
+  overflow: hidden;
   font-family: 'Helvetica Neue', Arial, sans-serif;
   background-color: #000; /* deep space black */
   color: #ddd;
 }
 
+/* Utility class to hide elements */
 .hidden {
   display: none;
 }
 
 /*-------------------------------------------------------------
-  INTRO (FULL-SCREEN ENTRY ANIMATION) STYLES
+  INTRO (FULL-SCREEN ENTRY ANIMATION) STYLES FOR index.html
 -------------------------------------------------------------*/
 #intro {
   position: fixed;
@@ -32,12 +36,11 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000; /* pure black behind canvas */
+  background-color: #000;
   overflow: hidden;
   z-index: 100;
 }
 
-/* STARFIELD CANVAS */
 #introCanvas {
   position: absolute;
   top: 0;
@@ -47,7 +50,6 @@ body {
   background: #000;
 }
 
-/* WHITE FLASH OVERLAY */
 #flashOverlay {
   position: absolute;
   top: 0;
@@ -59,7 +61,6 @@ body {
   pointer-events: none;
 }
 
-/* SVG LOGO CONTAINER */
 #introLogo {
   position: absolute;
   top: 50%;
@@ -71,30 +72,29 @@ body {
   pointer-events: none;
 }
 
-/* STYLE FOR <text id="logoText"> */
 #logoText {
-  filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.8))
-          drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
-  /* initial stroke-dash properties set in HTML; we animate via JS */
+  filter:
+    drop-shadow(0 0 12px rgba(0,255,255,0.8))
+    drop-shadow(0 0 4px rgba(255,255,255,0.6));
+  /* stroke-dasharray and stroke-dashoffset are set in the SVG itself */
 }
 
-/* AFTER DRAWING, MAKE THE “AS” FLASH/GLOW */
 @keyframes logo-glow-flicker {
-  0%   { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1)); }
-  10%  { filter: drop-shadow(0 0 6px rgba(0, 200, 255, 0.6)); }
-  20%  { filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1)); }
-  30%  { filter: drop-shadow(0 0 10px rgba(0, 180, 255, 0.7)); }
-  40%  { filter: drop-shadow(0 0 35px rgba(0, 255, 255, 1)); }
-  50%  { filter: drop-shadow(0 0 14px rgba(0, 200, 255, 0.6)); }
-  60%  { filter: drop-shadow(0 0 40px rgba(0, 255, 255, 1)); }
-  70%  { filter: drop-shadow(0 0 18px rgba(0, 220, 255, 0.8)); }
-  80%  { filter: drop-shadow(0 0 45px rgba(0, 255, 255, 1)); }
-  90%  { filter: drop-shadow(0 0 25px rgba(0, 200, 255, 0.6)); }
-  100% { filter: drop-shadow(0 0 50px rgba(0, 255, 255, 1)); }
+  0%   { filter: drop-shadow(0 0 20px rgba(0,255,255,1)); }
+  10%  { filter: drop-shadow(0 0 6px rgba(0,200,255,0.6)); }
+  20%  { filter: drop-shadow(0 0 30px rgba(255,255,255,1)); }
+  30%  { filter: drop-shadow(0 0 10px rgba(0,180,255,0.7)); }
+  40%  { filter: drop-shadow(0 0 35px rgba(0,255,255,1)); }
+  50%  { filter: drop-shadow(0 0 14px rgba(0,200,255,0.6)); }
+  60%  { filter: drop-shadow(0 0 40px rgba(0,255,255,1)); }
+  70%  { filter: drop-shadow(0 0 18px rgba(0,220,255,0.8)); }
+  80%  { filter: drop-shadow(0 0 45px rgba(0,255,255,1)); }
+  90%  { filter: drop-shadow(0 0 25px rgba(0,200,255,0.6)); }
+  100% { filter: drop-shadow(0 0 50px rgba(0,255,255,1)); }
 }
 
 /*-------------------------------------------------------------
-  MAIN CONTENT (AFTER INTRO) STYLES
+  MAIN CONTENT (index.html) STYLES – HIDDEN UNTIL AFTER INTRO
 -------------------------------------------------------------*/
 #mainContent {
   position: relative;
@@ -107,7 +107,6 @@ body {
   transition: opacity 1s ease;
 }
 
-/* HEADER */
 .site-header {
   display: flex;
   justify-content: space-between;
@@ -119,16 +118,14 @@ body {
   z-index: 10;
 }
 
-/* The “ASTRE” in the header will glow after intro */
 .site-logo {
   font-size: 1.75rem;
   font-weight: bold;
   letter-spacing: 2px;
   color: #fff;
-  opacity: 0; /* Will fade in via JS */
+  opacity: 0; /* will fade in after intro */
 }
 
-/* GLow-pulse for header text */
 @keyframes header-glow {
   0%   { text-shadow: 0 0 4px rgba(0,255,255,0.6); color: #0ff; }
   25%  { text-shadow: 0 0 12px rgba(0,255,255,1); color: #fff; }
@@ -151,7 +148,6 @@ body {
   color: #000;
 }
 
-/* PRODUCTS SECTION */
 .products-section {
   max-width: 1200px;
   margin: 2rem auto;
@@ -223,7 +219,6 @@ body {
   background: #0cc;
 }
 
-/* FOOTER */
 .site-footer {
   text-align: center;
   padding: 1rem;
@@ -232,7 +227,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* SCROLLBAR STYLING */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -245,10 +239,16 @@ body {
 }
 
 /*-------------------------------------------------------------
-  ADMIN LOGIN + DASHBOARD STYLES (IN THE SAME CSS)
+  ADMIN LOGIN + DASHBOARD STYLES (in the same CSS file)
 -------------------------------------------------------------*/
 
-/* A SUBTLE STAR FIELD BACKDROP FOR ADMIN PAGE */
+/* Override the html/body overflow when we’re on the admin page */
+.admin-container-loaded body,
+.admin-container-loaded html {
+  overflow: auto !important;
+}
+
+/* A subtle star field backdrop for the admin page */
 .admin-container {
   min-height: 100vh;
   background: radial-gradient(ellipse at bottom, #050520  0%, #000 100%);
@@ -259,6 +259,7 @@ body {
   position: relative;
 }
 
+/* Tiny SVG‐based stars, repeated */
 .admin-container::before {
   content: "";
   position: absolute;
@@ -275,7 +276,7 @@ body {
   z-index: 0;
 }
 
-/* MODERN ADMIN LOGIN CARD */
+/* Modern Admin Login Card */
 .admin-login-container {
   display: flex;
   justify-content: center;
@@ -290,8 +291,9 @@ body {
   background: rgba(0, 0, 0, 0.85);
   padding: 2rem 2.5rem;
   border-radius: 10px;
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.3),
-              inset 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 0 30px rgba(0, 255, 255, 0.3),
+    inset 0 0 10px rgba(0, 0, 0, 0.5);
   width: 340px;
   position: relative;
 }
@@ -305,13 +307,14 @@ body {
   font-size: 1.5rem;
 }
 
-/* FLOATING LABELS */
+/* Floating Labels */
 .login-card .form-group {
   position: relative;
   margin-bottom: 1.25rem;
 }
 
-.login-card input {
+.login-card input,
+.login-card textarea {
   width: 100%;
   padding: 0.75rem 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -323,7 +326,8 @@ body {
   transition: border-color 0.2s, background 0.2s;
 }
 
-.login-card input:focus {
+.login-card input:focus,
+.login-card textarea:focus {
   border-color: #0ff;
   background: rgba(0, 0, 0, 0.8);
 }
@@ -339,9 +343,11 @@ body {
   transition: transform 0.2s, font-size 0.2s, color 0.2s;
 }
 
-/* WHEN INPUT IS FOCUSED OR HAS TEXT, FLOAT LABEL UP */
+/* Float label when input is focused or filled */
 .login-card input:focus + label,
-.login-card input:not(:placeholder-shown) + label {
+.login-card input:not(:placeholder-shown) + label,
+.login-card textarea:focus + label,
+.login-card textarea:not(:placeholder-shown) + label {
   transform: translateY(-150%) scale(0.85);
   font-size: 0.75rem;
   color: #0ff;
@@ -349,7 +355,7 @@ body {
   padding: 0 0.25rem;
 }
 
-/* SUBMIT BUTTON */
+/* Submit button */
 .login-card button {
   width: 100%;
   padding: 0.75rem;
@@ -364,12 +370,11 @@ body {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
   transition: background 0.3s;
 }
-
 .login-card button:hover {
   background: linear-gradient(90deg, #00ccff, #0ff);
 }
 
-/* AFTER ADMIN LOGS IN, DASHBOARD SECTIONS */
+/* After admin logs in, the dashboard sections */
 .admin-section {
   background: rgba(255, 255, 255, 0.05);
   margin: 1rem auto;
@@ -380,13 +385,14 @@ body {
   z-index: 1;
 }
 
+/* Existing products in admin: grid layout */
 #existingProductsList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
 }
 
-/* ORDERS TABLE */
+/* Orders table */
 #ordersTable {
   width: 100%;
   border-collapse: collapse;
@@ -407,7 +413,7 @@ body {
   color: #ccc;
 }
 
-/* LOGOUT BUTTON */
+/* Logout button in the header */
 #logoutBtn {
   position: absolute;
   top: 1rem;
@@ -426,4 +432,3 @@ body {
   background: #0ff;
   color: #000;
 }
-

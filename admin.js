@@ -31,76 +31,87 @@ const firebaseConfig = {
   measurementId: "G-NDSZZX3H1G"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
+const app       = initializeApp(firebaseConfig);
+const auth      = getAuth(app);
+const database  = getDatabase(app);
 
 // ------------------------------
-// 3) DOM ELEMENTS
+// 3) DOM ELEMENTS (BY ID – MUST MATCH admin.html)
 // ------------------------------
-const loginWrapper          = document.getElementById('loginWrapper');
-const loginSection          = document.getElementById('loginSection');
-const loginForm             = document.getElementById('loginForm');
-const loginEmail            = document.getElementById('loginEmail');
-const loginPassword         = document.getElementById('loginPassword');
+const loginWrapper         = document.getElementById('loginWrapper');
+const loginForm            = document.getElementById('loginForm');
+const loginEmail           = document.getElementById('loginEmail');
+const loginPassword        = document.getElementById('loginPassword');
 
-const dashboardSection      = document.getElementById('dashboardSection');
-const logoutBtn             = document.getElementById('logoutBtn');
+const dashboardSection     = document.getElementById('dashboardSection');
+const logoutBtn            = document.getElementById('logoutBtn');
 
-const addProductForm        = document.getElementById('addProductForm');
-const prodNameInput         = document.getElementById('prodName');
-const prodDescInput         = document.getElementById('prodDesc');
-const prodPriceInput        = document.getElementById('prodPrice');
-const prodImageInput        = document.getElementById('prodImage');
-const existingProductsList  = document.getElementById('existingProductsList');
-const ordersTableBody       = document.querySelector('#ordersTable tbody');
+const addProductForm       = document.getElementById('addProductForm');
+const prodNameInput        = document.getElementById('prodName');
+const prodDescInput        = document.getElementById('prodDesc');
+const prodPriceInput       = document.getElementById('prodPrice');
+const prodImageInput       = document.getElementById('prodImage');
+const existingProductsList = document.getElementById('existingProductsList');
+const ordersTableBody      = document.querySelector('#ordersTable tbody');
 
 // ------------------------------
 // 4) AUTHENTICATION HANDLING
 // ------------------------------
 onAuthStateChanged(auth, (user) => {
+  console.log("onAuthStateChanged fired; user =", user);
+
   if (user) {
-    // Admin is signed in: hide login, show dashboard
+    console.log("→ user is signed in; hiding login, showing dashboard.");
     loginWrapper.classList.add('hidden');
     dashboardSection.classList.remove('hidden');
     logoutBtn.classList.remove('hidden');
+
+    // Once signed in, load “Existing Products” and “Orders”
     loadExistingProducts();
     loadOrders();
   } else {
-    // Not signed in: show login, hide dashboard
+    console.log("→ no user signed in; showing login form.");
     loginWrapper.classList.remove('hidden');
     dashboardSection.classList.add('hidden');
     logoutBtn.classList.add('hidden');
   }
 });
 
+// Handle Login Form Submit
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  const email = loginEmail.value.trim();
+  const email    = loginEmail.value.trim();
   const password = loginPassword.value;
+
+  if (!email || !password) {
+    alert("Please enter both email and password.");
+    return;
+  }
 
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
+      console.log("signInWithEmailAndPassword → success");
       loginForm.reset();
     })
     .catch((error) => {
-      console.error('Login error:', error.message);
-      alert('Login failed: ' + error.message);
+      console.error("Login error:", error);
+      alert("Login failed: " + error.message);
     });
 });
 
+// Handle Logout Button
 logoutBtn.addEventListener('click', () => {
   signOut(auth)
     .then(() => {
-      alert('Logged out successfully.');
+      console.log("User signed out.");
     })
     .catch((err) => {
-      console.error('Logout error:', err);
+      console.error("Logout error:", err);
     });
 });
 
 // ------------------------------
-// 5) ADD NEW PRODUCT FUNCTIONALITY
+// 5) ADD NEW PRODUCT
 // ------------------------------
 addProductForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -117,12 +128,7 @@ addProductForm.addEventListener('submit', (e) => {
 
   const productsRef = dbRef(database, 'products');
   const newProdRef  = push(productsRef);
-  set(newProdRef, {
-    name,
-    description,
-    price,
-    imageUrl
-  })
+  set(newProdRef, { name, description, price, imageUrl })
     .then(() => {
       alert('Product added successfully!');
       addProductForm.reset();
@@ -134,7 +140,7 @@ addProductForm.addEventListener('submit', (e) => {
 });
 
 // ------------------------------
-// 6) LOAD AND DISPLAY EXISTING PRODUCTS
+// 6) LOAD & DISPLAY EXISTING PRODUCTS
 // ------------------------------
 function loadExistingProducts() {
   const productsRef = dbRef(database, 'products');
@@ -156,17 +162,17 @@ function renderExistingProducts(products) {
   Object.keys(products).forEach((key) => {
     const { name, description, price, imageUrl } = products[key];
 
-    // Create a product card
+    // Create a small “card” for each product
     const card = document.createElement('div');
     card.classList.add('product-card');
 
-    // Image
+    // Product Image
     const img = document.createElement('img');
     img.src = imageUrl;
     img.alt = name;
     card.appendChild(img);
 
-    // Info
+    // Product Info
     const infoDiv = document.createElement('div');
     infoDiv.innerHTML = `
       <h3>${name}</h3>
@@ -175,7 +181,7 @@ function renderExistingProducts(products) {
     `;
     card.appendChild(infoDiv);
 
-    // Remove Button
+    // “Remove” Button
     const removeBtn = document.createElement('button');
     removeBtn.classList.add('buy-btn');
     removeBtn.style.background = '#f00';
@@ -203,7 +209,7 @@ function removeProduct(productId) {
 }
 
 // ------------------------------
-// 7) LOAD AND DISPLAY ORDERS
+// 7) LOAD & DISPLAY ORDERS
 // ------------------------------
 function loadOrders() {
   const ordersRef = dbRef(database, 'orders');
@@ -222,7 +228,7 @@ function renderOrders(orders) {
     return;
   }
 
-  // Fetch products once to map productId → productName
+  // Once, fetch all products to map productId → productName
   dbRef(database, 'products')
     .once('value')
     .then((prodSnap) => {
@@ -241,5 +247,8 @@ function renderOrders(orders) {
         `;
         ordersTableBody.appendChild(tr);
       });
+    })
+    .catch((err) => {
+      console.error("Error fetching products for orders:", err);
     });
 }
