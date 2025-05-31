@@ -2,70 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ASTRE Clothing</title>
-  <!-- Link to shared CSS -->
   <link rel="stylesheet" href="styles.css" />
-  <!-- GSAP for animations -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"></script>
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-  <!-- Our main JavaScript (module) -->
   <script type="module" src="main.js" defer></script>
 </head>
 <body>
-  <!-- ======================================
-       1) INTRO (STARFIELD + “AS” LIGHTNING)
-       ====================================== -->
   <div id="introContainer">
     <canvas id="starfield"></canvas>
     <div id="flashScreen"></div>
     <div id="logoWrapper">
-      <svg
-        id="asLogo"
-        viewBox="0 0 600 200"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <text
-          id="logoText"
-          x="50%"
-          y="50%"
-          text-anchor="middle"
-          dominant-baseline="middle"
-          font-family="Helvetica Neue, Arial, sans-serif"
-          font-size="150px"
-          fill="none"
-          stroke="#0ff"
-          stroke-width="4"
-          stroke-linejoin="round"
-          stroke-dasharray="1000"
-          stroke-dashoffset="1000"
-        >
+      <svg id="asLogo" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+        <text id="logoText" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+          font-family="Inter, sans-serif" font-size="150px" fill="none" stroke="#00f7ff"
+          stroke-width="4" stroke-linejoin="round" stroke-dasharray="1000" stroke-dashoffset="1000">
           AS
         </text>
       </svg>
     </div>
   </div>
 
-  <!-- =====================
-       2) MAIN CONTENT
-       (Hidden until intro finishes)
-       ===================== -->
   <div id="mainContent" class="hidden">
-    <!-- HEADER -->
-    <header class="site-header">
+    <header class="site-header glass">
       <div class="site-logo">ASTRE</div>
       <nav class="site-nav">
         <a href="admin.html" class="login-btn">Admin Login</a>
       </nav>
     </header>
 
-    <!-- PRODUCTS SECTION -->
     <main class="products-section">
       <h2>Our Collection</h2>
       <div id="productList" class="product-grid">
@@ -73,8 +44,7 @@
       </div>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
+    <footer class="site-footer glass">
       <p>© 2025 ASTRE Clothing. All rights reserved.</p>
     </footer>
   </div>
