@@ -1,6 +1,4 @@
-// ------------------------------
-// 1) IMPORT & INITIALIZE FIREBASE
-// ------------------------------
+// Firebase Imports
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
 import {
   getAuth,
@@ -17,7 +15,7 @@ import {
   remove
 } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
 
-// Your Firebase project’s config (provided by you)
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDx0t5M9QRPQoRBaMDtDUmGICCX8r_k2nw",
   authDomain: "astre-f93d3.firebaseapp.com",
@@ -33,105 +31,92 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-// ------------------------------
-// 2) REFERENCE DOM ELEMENTS
-// ------------------------------
-const loginWrapper     = document.getElementById('loginWrapper');
-const loginForm        = document.getElementById('loginForm');
-const loginEmail       = document.getElementById('loginEmail');
-const loginPassword    = document.getElementById('loginPassword');
-
+// DOM Elements
+const loginWrapper = document.getElementById('loginWrapper');
+const loginForm = document.getElementById('loginForm');
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
+const loginButton = document.getElementById('loginButton');
+const loginMessage = document.getElementById('loginMessage');
 const dashboardSection = document.getElementById('dashboardSection');
-const logoutBtn        = document.getElementById('logoutBtn');
-
-const addProductForm       = document.getElementById('addProductForm');
-const prodNameInput        = document.getElementById('prodName');
-const prodDescInput        = document.getElementById('prodDesc');
-const prodPriceInput       = document.getElementById('prodPrice');
-const prodImageInput       = document.getElementById('prodImage');
+const logoutBtn = document.getElementById('logoutBtn');
+const addProductForm = document.getElementById('addProductForm');
 const existingProductsList = document.getElementById('existingProductsList');
-const ordersTableBody      = document.querySelector('#ordersTable tbody');
+const ordersTableBody = document.querySelector('#ordersTable tbody');
 
-// ------------------------------
-// 3) AUTH STATE HANDLING
-// ------------------------------
+// Show message function
+function showMessage(message, type) {
+  loginMessage.textContent = message;
+  loginMessage.className = `login-message ${type}-message`;
+  loginMessage.style.opacity = '1';
+  
+  // Clear message after 5 seconds
+  setTimeout(() => {
+    loginMessage.style.opacity = '0';
+    setTimeout(() => {
+      loginMessage.textContent = '';
+      loginMessage.className = 'login-message';
+    }, 300);
+  }, 5000);
+}
+
+// Auth state observer
 onAuthStateChanged(auth, (user) => {
-  console.log("onAuthStateChanged fired; user =", user);
+  console.log("Auth state changed:", user ? "User logged in" : "No user");
+  
   if (user) {
-    console.log("→ user is signed in; hiding login, showing dashboard.");
     loginWrapper.classList.add('hidden');
     dashboardSection.classList.remove('hidden');
     logoutBtn.classList.remove('hidden');
     loadExistingProducts();
     loadOrders();
+    showMessage('Successfully logged in!', 'success');
   } else {
-    console.log("→ no user signed in; showing login form.");
     loginWrapper.classList.remove('hidden');
     dashboardSection.classList.add('hidden');
     logoutBtn.classList.add('hidden');
+    loginForm.reset();
   }
 });
 
-// Handle login form submission
-loginForm.addEventListener('submit', (e) => {
+// Login form handler
+loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const email    = loginEmail.value.trim();
+  
+  const email = loginEmail.value.trim();
   const password = loginPassword.value;
+  
   if (!email || !password) {
-    alert("Please enter both email and password.");
+    showMessage('Please enter both email and password.', 'error');
     return;
   }
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      console.log("signInWithEmailAndPassword → success");
-      loginForm.reset();
-    })
-    .catch((error) => {
-      console.error("Login error:", error);
-      alert("Login failed: " + error.message);
-    });
-});
-
-// Handle logout
-logoutBtn.addEventListener('click', () => {
-  signOut(auth)
-    .then(() => {
-      console.log("User signed out.");
-    })
-    .catch(err => {
-      console.error("Logout error:", err);
-    });
-});
-
-// ------------------------------
-// 4) ADD NEW PRODUCT
-// ------------------------------
-addProductForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name        = prodNameInput.value.trim();
-  const description = prodDescInput.value.trim();
-  const price       = parseFloat(prodPriceInput.value).toFixed(2);
-  const imageUrl    = prodImageInput.value.trim();
-  if (!name || !description || !price || !imageUrl) {
-    alert('Please fill in all fields.');
-    return;
+  
+  loginButton.disabled = true;
+  loginButton.textContent = 'Logging in...';
+  
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    console.log("Login successful");
+  } catch (error) {
+    console.error("Login error:", error);
+    showMessage(error.message, 'error');
+    loginButton.disabled = false;
+    loginButton.textContent = 'Login';
   }
-  const productsRef = dbRef(database, 'products');
-  const newProdRef  = push(productsRef);
-  set(newProdRef, { name, description, price, imageUrl })
-    .then(() => {
-      alert('Product added successfully!');
-      addProductForm.reset();
-    })
-    .catch(err => {
-      console.error('Error adding product:', err);
-      alert('Failed to add product.');
-    });
 });
 
-// ------------------------------
-// 5) LOAD & DISPLAY EXISTING PRODUCTS
-// ------------------------------
+// Logout handler
+logoutBtn.addEventListener('click', async () => {
+  try {
+    await signOut(auth);
+    showMessage('Logged out successfully', 'success');
+  } catch (error) {
+    console.error("Logout error:", error);
+    showMessage('Error logging out', 'error');
+  }
+});
+
+// Product management functions
 function loadExistingProducts() {
   const productsRef = dbRef(database, 'products');
   onValue(productsRef, (snapshot) => {
@@ -143,61 +128,63 @@ function loadExistingProducts() {
 function renderExistingProducts(products) {
   existingProductsList.innerHTML = '';
   if (!products) {
-    existingProductsList.innerHTML =
-      '<p style="color:#777; text-align:center;">No products found.</p>';
+    existingProductsList.innerHTML = '<p class="no-products">No products found.</p>';
     return;
   }
+
   Object.keys(products).forEach((key) => {
     const { name, description, price, imageUrl } = products[key];
-
-    // Create a small “card” for each product
     const card = document.createElement('div');
     card.classList.add('product-card');
-
-    // Product Image
-    const img = document.createElement('img');
-    img.src = imageUrl;
-    img.alt = name;
-    card.appendChild(img);
-
-    // Product Info
-    const infoDiv = document.createElement('div');
-    infoDiv.innerHTML = `
+    
+    card.innerHTML = `
+      <img src="${imageUrl}" alt="${name}">
       <h3>${name}</h3>
       <p>${description}</p>
       <div class="price">$${parseFloat(price).toFixed(2)}</div>
+      <button class="buy-btn delete-btn" data-id="${key}">Remove</button>
     `;
-    card.appendChild(infoDiv);
-
-    // “Remove” Button
-    const removeBtn = document.createElement('button');
-    removeBtn.classList.add('buy-btn');
-    removeBtn.style.background = '#f00';
-    removeBtn.style.color = '#fff';
-    removeBtn.textContent = 'Remove';
-    removeBtn.addEventListener('click', () => removeProduct(key));
-    card.appendChild(removeBtn);
-
+    
+    card.querySelector('.delete-btn').addEventListener('click', () => removeProduct(key));
     existingProductsList.appendChild(card);
   });
 }
 
-function removeProduct(productId) {
+async function removeProduct(productId) {
   if (!confirm('Are you sure you want to remove this product?')) return;
-  const singleProdRef = dbRef(database, `products/${productId}`);
-  remove(singleProdRef)
-    .then(() => {
-      alert('Product removed.');
-    })
-    .catch((err) => {
-      console.error('Error removing product:', err);
-      alert('Failed to remove product.');
-    });
+  
+  try {
+    await remove(dbRef(database, `products/${productId}`));
+    showMessage('Product removed successfully', 'success');
+  } catch (error) {
+    console.error('Error removing product:', error);
+    showMessage('Failed to remove product', 'error');
+  }
 }
 
-// ------------------------------
-// 6) LOAD & DISPLAY ORDERS
-// ------------------------------
+// Add product form handler
+addProductForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = {
+    name: e.target.prodName.value.trim(),
+    description: e.target.prodDesc.value.trim(),
+    price: parseFloat(e.target.prodPrice.value).toFixed(2),
+    imageUrl: e.target.prodImage.value.trim()
+  };
+  
+  try {
+    const newProdRef = push(dbRef(database, 'products'));
+    await set(newProdRef, formData);
+    showMessage('Product added successfully!', 'success');
+    addProductForm.reset();
+  } catch (error) {
+    console.error('Error adding product:', error);
+    showMessage('Failed to add product', 'error');
+  }
+});
+
+// Load orders
 function loadOrders() {
   const ordersRef = dbRef(database, 'orders');
   onValue(ordersRef, (snapshot) => {
@@ -209,30 +196,26 @@ function loadOrders() {
 function renderOrders(orders) {
   ordersTableBody.innerHTML = '';
   if (!orders) {
-    ordersTableBody.innerHTML =
-      '<tr><td colspan="4" style="color:#777; text-align:center;">No orders placed yet.</td></tr>';
+    ordersTableBody.innerHTML = '<tr><td colspan="4" class="no-orders">No orders placed yet.</td></tr>';
     return;
   }
-  dbRef(database, 'products')
-    .once('value')
-    .then((prodSnap) => {
-      const prodData = prodSnap.val() || {};
-      Object.keys(orders).forEach((orderId) => {
-        const { productId, email, timestamp } = orders[orderId];
-        const productName =
-          prodData[productId]?.name || 'Unknown';
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${orderId}</td>
-          <td>${productName}</td>
-          <td>${email}</td>
-          <td>${new Date(timestamp).toLocaleString()}</td>
-        `;
-        ordersTableBody.appendChild(tr);
-      });
-    })
-    .catch((err) => {
-      console.error('Error fetching products for orders:', err);
-    });
-}
 
+  const productsRef = dbRef(database, 'products');
+  onValue(productsRef, (prodSnapshot) => {
+    const products = prodSnapshot.val() || {};
+    
+    Object.entries(orders).forEach(([orderId, order]) => {
+      const { productId, email, timestamp } = order;
+      const product = products[productId] || { name: 'Unknown Product' };
+      
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${orderId}</td>
+        <td>${product.name}</td>
+        <td>${email}</td>
+        <td>${new Date(timestamp).toLocaleString()}</td>
+      `;
+      ordersTableBody.appendChild(row);
+    });
+  });
+}

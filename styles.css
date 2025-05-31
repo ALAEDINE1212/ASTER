@@ -1,435 +1,48 @@
-/* Modern Reset & Base Styles */
-:root {
-  --primary: #00f7ff;
-  --primary-dark: #00c4cc;
-  --text: #e1e1e6;
-  --background: #030014;
-  --surface: rgba(255, 255, 255, 0.03);
-  --surface-hover: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.1);
-}
+/* Adding to existing styles.css - append at the end */
 
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--background);
-  color: var(--text);
-  line-height: 1.5;
-}
-
-/* Utility Classes */
-.hidden {
-  display: none;
-}
-
-.glass {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* Intro Animation Styles */
-#introContainer {
-  position: fixed;
-  inset: 0;
-  background: var(--background);
-  overflow: hidden;
-  z-index: 100;
-}
-
-#starfield {
-  position: absolute;
-  inset: 0;
-  background: var(--background);
-  z-index: 1;
-}
-
-#flashScreen {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
-#logoWrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-}
-
-#asLogo {
-  width: 60vw;
-  max-width: 600px;
-  height: auto;
-  pointer-events: none;
-}
-
-#logoText {
-  filter: drop-shadow(0 0 20px rgba(0,247,255,0.8))
-          drop-shadow(0 0 8px rgba(255,255,255,0.6));
-}
-
-@keyframes as-flicker {
-  0%, 100% { filter: drop-shadow(0 0 25px rgba(0,247,255,1)); }
-  25% { filter: drop-shadow(0 0 8px rgba(0,200,255,0.6)); }
-  50% { filter: drop-shadow(0 0 35px rgba(255,255,255,1)); }
-  75% { filter: drop-shadow(0 0 15px rgba(0,180,255,0.7)); }
-}
-
-/* Main Content */
-#mainContent {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  background: radial-gradient(
-    ellipse at top,
-    #060530 0%,
-    var(--background) 100%
-  );
-  background-attachment: fixed;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-/* Header */
-.site-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2.5rem;
-  position: sticky;
-  top: 0;
-  background: rgba(3, 0, 20, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 10;
-  border-bottom: 1px solid var(--border);
-}
-
-.site-logo {
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 3px;
-  color: #fff;
-  opacity: 0;
-  text-shadow: 0 0 15px rgba(0,247,255,0.5);
-}
-
-.site-nav .login-btn {
+/* Login Message Styles */
+.login-message {
+  margin: -1rem 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
   font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--primary);
-  padding: 0.75rem 1.5rem;
-  border: 1px solid var(--primary);
-  border-radius: 8px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.site-nav .login-btn:hover {
-  background: var(--primary);
-  color: var(--background);
-  box-shadow: 0 0 20px rgba(0,247,255,0.3);
-}
-
-/* Products Section */
-.products-section {
-  max-width: 1400px;
-  margin: 4rem auto;
-  padding: 0 2.5rem;
   text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.products-section h2 {
-  margin-bottom: 3rem;
-  font-size: 3.5rem;
-  font-weight: 700;
-  background: linear-gradient(to right, #fff, var(--primary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  letter-spacing: -0.02em;
+.success-message {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  color: #00ff00;
 }
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2.5rem;
-  margin-bottom: 4rem;
+.error-message {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  color: #ff4444;
 }
 
-/* Product Cards */
-.product-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1.5rem;
-  text-align: left;
-  transition: all 0.3s ease;
-  overflow: hidden;
+/* Loading State for Login Button */
+#loginButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3),
-              0 0 30px rgba(0,247,255,0.2);
-  background: var(--surface-hover);
-}
-
-.product-card img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  transition: transform 0.3s ease;
-}
-
-.product-card:hover img {
-  transform: scale(1.05);
-}
-
-.product-card h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: #fff;
-}
-
-.product-card p {
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  color: #a1a1aa;
-  line-height: 1.6;
-}
-
-.product-card .price {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: var(--primary);
-}
-
-.product-card .buy-btn {
-  width: 100%;
-  padding: 1rem;
-  background: var(--primary);
-  border: none;
-  border-radius: 8px;
-  color: var(--background);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.product-card .buy-btn:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,247,255,0.2);
-}
-
-/* Footer */
-.site-footer {
-  text-align: center;
-  padding: 2rem;
-  background: rgba(3, 0, 20, 0.9);
+/* Empty State Styles */
+.no-products,
+.no-orders {
   color: #71717a;
-  font-size: 0.9rem;
-  border-top: 1px solid var(--border);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--surface);
-  border-radius: 5px;
-  border: 2px solid var(--background);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--surface-hover);
-}
-
-/* Admin Styles */
-body.admin-container-loaded,
-html.admin-container-loaded {
-  overflow: auto !important;
-}
-
-.admin-container {
-  min-height: 100vh;
-  background: radial-gradient(
-    ellipse at top,
-    #060530 0%,
-    var(--background) 100%
-  );
-  background-attachment: fixed;
-  color: var(--text);
-  padding: 2rem;
-}
-
-.admin-login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
-}
-
-.login-card {
-  background: rgba(3, 0, 20, 0.9);
-  padding: 3rem;
-  border-radius: 20px;
-  width: 400px;
-  border: 1px solid var(--border);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-
-.login-card h2 {
   text-align: center;
-  color: var(--primary);
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.login-card .form-group {
-  position: relative;
-  margin-bottom: 1.5rem;
-}
-
-.login-card input,
-.login-card textarea {
-  width: 100%;
-  padding: 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: #fff;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.login-card input:focus,
-.login-card textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(0,247,255,0.2);
-  outline: none;
-}
-
-.login-card label {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #71717a;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  font-size: 1rem;
-}
-
-.login-card input:focus + label,
-.login-card input:not(:placeholder-shown) + label {
-  transform: translateY(-170%) scale(0.8);
-  color: var(--primary);
-}
-
-.login-card button {
-  width: 100%;
-  padding: 1rem;
-  background: var(--primary);
-  border: none;
-  border-radius: 8px;
-  color: var(--background);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.login-card button:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,247,255,0.2);
-}
-
-/* Admin Dashboard */
-.admin-section {
-  background: var(--surface);
-  margin: 2rem auto;
   padding: 2rem;
-  border-radius: 16px;
-  max-width: 1000px;
-  border: 1px solid var(--border);
+  font-style: italic;
 }
 
-.admin-section h3 {
-  color: #fff;
-  font-size: 1.75rem;
-  margin-bottom: 1.5rem;
+/* Delete Button Style */
+.delete-btn {
+  background: #ff4444 !important;
 }
 
-#ordersTable {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 1.5rem;
-}
-
-#ordersTable th,
-#ordersTable td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-
-#ordersTable th {
-  background: var(--surface-hover);
-  color: #fff;
-  font-weight: 600;
-}
-
-#ordersTable tr:hover td {
-  background: var(--surface-hover);
-}
-
-#logoutBtn {
-  background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#logoutBtn:hover {
-  background: var(--primary);
-  color: var(--background);
-  box-shadow: 0 0 20px rgba(0,247,255,0.2);
+.delete-btn:hover {
+  background: #cc0000 !important;
 }
