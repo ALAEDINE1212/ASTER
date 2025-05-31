@@ -1,48 +1,123 @@
-/* Adding to existing styles.css - append at the end */
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* Login Message Styles */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background: #f0f0f0;
+}
+
+/* Header */
+.site-header {
+  background: #333;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-btn {
+  padding: 0.5rem 1rem;
+  background: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* Login Form */
+.admin-login-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.login-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 4px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Dashboard */
+.admin-section {
+  background: white;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+/* Product List */
+.product-list-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.product-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+}
+
+.product-card img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+/* Utility Classes */
+.hidden {
+  display: none;
+}
+
+/* Messages */
 .login-message {
-  margin: -1rem 0 1.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
 }
 
 .success-message {
-  background: rgba(0, 255, 0, 0.1);
-  border: 1px solid rgba(0, 255, 0, 0.2);
-  color: #00ff00;
+  background: #d4edda;
+  color: #155724;
 }
 
 .error-message {
-  background: rgba(255, 0, 0, 0.1);
-  border: 1px solid rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-}
-
-/* Loading State for Login Button */
-#loginButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Empty State Styles */
-.no-products,
-.no-orders {
-  color: #71717a;
-  text-align: center;
-  padding: 2rem;
-  font-style: italic;
-}
-
-/* Delete Button Style */
-.delete-btn {
-  background: #ff4444 !important;
-}
-
-.delete-btn:hover {
-  background: #cc0000 !important;
+  background: #f8d7da;
+  color: #721c24;
 }
